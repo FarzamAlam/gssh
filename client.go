@@ -52,3 +52,23 @@ func (client Client) Run(cmd string) ([]byte, error) {
 	defer session.Close()
 	return session.CombinedOutput(cmd)
 }
+
+func (client Client) GetTerminal() error {
+	session, err := client.Conn.NewSession()
+	if err != nil {
+		return err
+	}
+	modes := ssh.TerminalModes{
+		ssh.ECHO:          1,
+		ssh.TTY_OP_ISPEED: 14400,
+		ssh.TTY_OP_OSPEED: 14400,
+	}
+	defer session.Close()
+	// Request sudo terminal
+	err = session.RequestPty("vt100", 40, 80, modes)
+	if err != nil {
+		return err
+	}
+	err = session.Shell()
+	return err
+}

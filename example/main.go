@@ -53,4 +53,6 @@ func main() {
 		}
 		fmt.Println(string(out))
 	}
+	err = client.GetTerminal()
+	fmt.Println("Error : ", err)
 }
