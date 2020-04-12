@@ -19,7 +19,7 @@ var (
 func init() {
 	flag.StringVar(&host, "host", "192.168.0.106", "Host ip address to connect to.")
 	flag.IntVar(&port, "port", 22, "Host port to connect to.")
-	flag.StringVar(&user, "user", "astrologer", "username of the account")
+	flag.StringVar(&user, "user", "admin", "username of the account")
 	flag.StringVar(&pass, "pass", "", "password for the account")
 	flag.StringVar(&cmd, "cmd", "", "command to excute on the remote")
 }
