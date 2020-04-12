@@ -79,9 +79,9 @@ func (client Client) GetTerminal() error {
 			return err
 		}
 		defer terminal.Restore(fileDescriptor, originalState)
-
+		width, height, err := terminal.GetSize(fileDescriptor)
 		// Request pseudo terminal
-		err = session.RequestPty("vt100", 80, 40, modes)
+		err = session.RequestPty("vt100", height, width, modes)
 		if err != nil {
 			fmt.Print("Error at RequestPty")
 			return err
