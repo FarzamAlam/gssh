@@ -10,7 +10,10 @@ import (
 )
 
 func DefaultKnowHosts() (ssh.HostKeyCallback, error) {
-	home := os.Getenv("HOME")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("home : ", home)
 	loc := strings.Join([]string{home, ".ssh", "known_hosts"}, "\\")
 	fmt.Println("loc : ", loc)

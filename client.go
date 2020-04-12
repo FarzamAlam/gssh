@@ -59,7 +59,7 @@ func (client Client) Run(cmd string) ([]byte, error) {
 func (client Client) GetTerminal() error {
 	session, err := client.Conn.NewSession()
 	if err != nil {
-		fmt.Errorf("Error at NewSession")
+		fmt.Print("Error at NewSession")
 		return err
 	}
 	defer session.Close()
@@ -79,11 +79,7 @@ func (client Client) GetTerminal() error {
 			return err
 		}
 		defer terminal.Restore(fileDescriptor, originalState)
-		//termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
-		if err != nil {
-			fmt.Print("Error at GetSize:")
-			return err
-		}
+
 		// Request pseudo terminal
 		err = session.RequestPty("vt100", 80, 40, modes)
 		if err != nil {

@@ -54,5 +54,11 @@ func main() {
 		fmt.Println(string(out))
 	}
 	err = client.GetTerminal()
-	fmt.Println("Error : ", err)
+	if err != nil {
+		if err.Error() == "Process exited with status 1" {
+			fmt.Println("The Session have been closed, Thank you for using gssh :)")
+		} else {
+			log.Fatal(err)
+		}
+	}
 }
