@@ -1,6 +1,7 @@
 package gssh
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -9,7 +10,11 @@ import (
 )
 
 func DefaultKnowHosts() (ssh.HostKeyCallback, error) {
-	return KnownHosts(strings.Join([]string{os.Getenv("HOME"), ".ssh", "known_hosts"}, "/"))
+	home := os.Getenv("HOME")
+	fmt.Println("home : ", home)
+	loc := strings.Join([]string{home, ".ssh", "known_hosts"}, "\\")
+	fmt.Println("loc : ", loc)
+	return KnownHosts(loc)
 }
 
 func KnownHosts(kh string) (ssh.HostKeyCallback, error) {

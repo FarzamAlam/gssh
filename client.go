@@ -1,9 +1,12 @@
 package gssh
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/terminal"
 )
 
 type Client struct {
@@ -56,19 +59,47 @@ func (client Client) Run(cmd string) ([]byte, error) {
 func (client Client) GetTerminal() error {
 	session, err := client.Conn.NewSession()
 	if err != nil {
+		fmt.Errorf("Error at NewSession")
 		return err
 	}
+	defer session.Close()
+	session.Stdout = os.Stdout
+	session.Stderr = os.Stderr
+	session.Stdin = os.Stdin
 	modes := ssh.TerminalModes{
 		ssh.ECHO:          1,
 		ssh.TTY_OP_ISPEED: 14400,
 		ssh.TTY_OP_OSPEED: 14400,
 	}
-	defer session.Close()
-	// Request sudo terminal
-	err = session.RequestPty("vt100", 40, 80, modes)
+	fileDescriptor := int(os.Stdin.Fd())
+	if terminal.IsTerminal(fileDescriptor) {
+		originalState, err := terminal.MakeRaw(fileDescriptor)
+		if err != nil {
+			fmt.Print("Error at MakeRaw")
+			return err
+		}
+		defer terminal.Restore(fileDescriptor, originalState)
+		//termWidth, termHeight, err := terminal.GetSize(fileDescriptor)
+		if err != nil {
+			fmt.Print("Error at GetSize:")
+			return err
+		}
+		// Request pseudo terminal
+		err = session.RequestPty("vt100", 80, 40, modes)
+		if err != nil {
+			fmt.Print("Error at RequestPty")
+			return err
+		}
+	}
+
+	err = session.Shell()
 	if err != nil {
+		fmt.Print("Error at Shell:")
 		return err
 	}
-	err = session.Shell()
+	err = session.Wait()
+	if err != nil {
+		fmt.Print("Error at Wait :")
+	}
 	return err
 }

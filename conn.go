@@ -18,6 +18,7 @@ func Conn(client *Client, cfg *ssh.ClientConfig) (err error) {
 	if client.Protocol == "" {
 		client.Protocol = TCP
 	}
-	client.Conn, err = ssh.Dial(client.Protocol, fmt.Sprintf("%s:%d", client.Host, client.Port), cfg)
+	loc := fmt.Sprintf("%s:%d", client.Host, client.Port)
+	client.Conn, err = ssh.Dial(client.Protocol, loc, cfg)
 	return
 }
